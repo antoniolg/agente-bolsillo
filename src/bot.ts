@@ -10,9 +10,11 @@ const bot = new Bot(telegramToken)
 const agentDir = join(homedir(), ".config", "agente-bolsillo")
 const skillsDir = join(agentDir, "skills")
 const uploadsDir = join(agentDir, "uploads")
+const memoryPath = join(agentDir, "MEMORY.md")
 const soul = await readFile(join(agentDir, "SOUL.md"), "utf8")
 const user = await readFile(join(agentDir, "USER.md"), "utf8")
 const agents = await readFile(join(agentDir, "AGENTS.md"), "utf8")
+const memory = await readFile(memoryPath, "utf8")
 
 const loader = new DefaultResourceLoader({
   cwd: agentDir,
@@ -21,7 +23,7 @@ const loader = new DefaultResourceLoader({
     skills: skills.filter((skill) => skill.filePath.startsWith(skillsDir)),
     diagnostics,
   }),
-  appendSystemPromptOverride: (base) => [...base, soul, user, agents],
+  appendSystemPromptOverride: (base) => [...base, soul, user, agents, memory],
 })
 await loader.reload()
 
@@ -32,6 +34,7 @@ const { session } = await createAgentSession({
 })
 
 async function askPi(message: string) {
+  const currentMemory = await readFile(memoryPath, "utf8")
   let text = ""
   const unsubscribe = session.subscribe((event) => {
     if (event.type === "message_update" && event.assistantMessageEvent.type === "text_delta") {
@@ -39,7 +42,7 @@ async function askPi(message: string) {
     }
   })
 
-  await session.prompt(message)
+  await session.prompt(`${message}\n\nMemoria actual:\n${currentMemory}`)
   unsubscribe()
   return text.trim()
 }

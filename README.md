@@ -58,6 +58,18 @@ Añadimos soporte para imágenes:
 - El agente recibe la ruta local de la imagen.
 - La skill puede publicar en X con texto e imagen.
 
+## Paso 6
+
+Añadimos memoria:
+
+```txt
+~/.config/agente-bolsillo/MEMORY.md
+```
+
+- El bot carga la memoria como contexto.
+- `AGENTS.md` explica cuándo merece la pena guardarla.
+- Cada turno lee la versión actual del archivo.
+
 ## Comandos
 
 ```bash
