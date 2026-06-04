@@ -6,6 +6,7 @@ import { createAgentSession, DefaultResourceLoader, SessionManager } from "@eare
 
 const bot = new Bot(process.env.TELEGRAM_TOKEN!)
 const agentDir = join(homedir(), ".config", "agente-bolsillo")
+const skillsDir = join(agentDir, "skills")
 const soul = await readFile(join(agentDir, "SOUL.md"), "utf8")
 const user = await readFile(join(agentDir, "USER.md"), "utf8")
 const agents = await readFile(join(agentDir, "AGENTS.md"), "utf8")
@@ -13,6 +14,10 @@ const agents = await readFile(join(agentDir, "AGENTS.md"), "utf8")
 const loader = new DefaultResourceLoader({
   cwd: agentDir,
   agentDir,
+  skillsOverride: ({ skills, diagnostics }) => ({
+    skills: skills.filter((skill) => skill.filePath.startsWith(skillsDir)),
+    diagnostics,
+  }),
   appendSystemPromptOverride: (base) => [...base, soul, user, agents],
 })
 await loader.reload()

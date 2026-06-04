@@ -38,6 +38,18 @@ Añadimos `USER.md` y `AGENTS.md`:
 - El runtime carga más contexto sin cambiar la conversación de Telegram.
 - En `config/` tienes una copia de referencia para preparar esa carpeta.
 
+## Paso 4
+
+Añadimos una skill:
+
+```txt
+~/.config/agente-bolsillo/skills/x-publish/SKILL.md
+```
+
+- Pi descubre skills desde la carpeta de configuración del agente.
+- La skill explica cómo publicar en X usando un script propio.
+- El bot puede convertir una petición de Telegram en una acción fuera del chat.
+
 ## Comandos
 
 ```bash
