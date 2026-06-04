@@ -24,6 +24,20 @@ Añadimos `SOUL.md` en la configuración del usuario:
 - Pi recibe instrucciones de personalidad al arrancar la sesión.
 - La sesión trabaja desde la carpeta del agente, no desde el repo del runtime.
 
+## Paso 3
+
+Añadimos `USER.md` y `AGENTS.md`:
+
+```txt
+~/.config/agente-bolsillo/USER.md
+~/.config/agente-bolsillo/AGENTS.md
+```
+
+- `USER.md` describe para quién trabaja.
+- `AGENTS.md` describe las reglas del canal.
+- El runtime carga más contexto sin cambiar la conversación de Telegram.
+- En `config/` tienes una copia de referencia para preparar esa carpeta.
+
 ## Comandos
 
 ```bash
