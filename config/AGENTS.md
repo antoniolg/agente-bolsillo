@@ -15,3 +15,7 @@ Cuando Antonio te pida recordar algo explícitamente, añádelo a `MEMORY.md`.
 Cuando aparezca un dato claramente útil para conversaciones futuras, también puedes guardarlo.
 
 Mantén recuerdos breves y concretos.
+
+Las acciones que salen fuera de Telegram necesitan confirmación explícita.
+
+Para publicar en X, el mensaje de Antonio debe empezar por Confirmo.

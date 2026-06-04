@@ -70,6 +70,14 @@ Añadimos memoria:
 - `AGENTS.md` explica cuándo merece la pena guardarla.
 - Cada turno lee la versión actual del archivo.
 
+## Paso 7
+
+Añadimos approvals:
+
+- Publicar en X se considera una acción externa.
+- Si el mensaje no empieza por `Confirmo`, el bot no delega en Pi.
+- La frontera vive en el arnés, no en la buena voluntad del modelo.
+
 ## Comandos
 
 ```bash

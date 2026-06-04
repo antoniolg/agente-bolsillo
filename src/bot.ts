@@ -3,6 +3,7 @@ import { homedir } from "node:os"
 import { join } from "node:path"
 import { Bot } from "grammy"
 import { createAgentSession, DefaultResourceLoader, SessionManager } from "@earendil-works/pi-coding-agent"
+import { approvalMessage, hasApproval, needsApproval } from "./approvals.js"
 import { saveTelegramPhoto } from "./telegram-files.js"
 
 const telegramToken = process.env.TELEGRAM_TOKEN!
@@ -48,14 +49,25 @@ async function askPi(message: string) {
 }
 
 bot.on("message:text", async (ctx) => {
+  if (needsApproval(ctx.message.text) && !hasApproval(ctx.message.text)) {
+    await ctx.reply(approvalMessage)
+    return
+  }
+
   const answer = await askPi(ctx.message.text)
   await ctx.reply(answer)
 })
 
 bot.on("message:photo", async (ctx) => {
+  const caption = ctx.message.caption ?? "Antonio ha enviado una imagen."
+
+  if (needsApproval(caption) && !hasApproval(caption)) {
+    await ctx.reply(approvalMessage)
+    return
+  }
+
   const photo = ctx.message.photo.at(-1)!
   const imagePath = await saveTelegramPhoto(bot, telegramToken, photo.file_id, uploadsDir)
-  const caption = ctx.message.caption ?? "Antonio ha enviado una imagen."
   const answer = await askPi(`${caption}\n\nImagen local: ${imagePath}`)
   await ctx.reply(answer)
 })
