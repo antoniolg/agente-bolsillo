@@ -1,7 +1,10 @@
 import { createHmac, randomBytes } from "node:crypto"
+import { readFile } from "node:fs/promises"
+import { basename, extname } from "node:path"
 import { stdin } from "node:process"
 
-const endpoint = "https://api.x.com/2/tweets"
+const tweetEndpoint = "https://api.x.com/2/tweets"
+const uploadEndpoint = "https://upload.twitter.com/1.1/media/upload.json"
 
 function encode(value: string) {
   return encodeURIComponent(value).replace(/[!'()*]/g, (char) =>
@@ -25,7 +28,7 @@ function requireEnv(name: string) {
   return value
 }
 
-function createAuthHeader() {
+function createAuthHeader(endpoint: string) {
   const apiKey = requireEnv("X_API_KEY")
   const apiSecret = requireEnv("X_API_SECRET")
   const accessToken = requireEnv("X_ACCESS_TOKEN")
@@ -58,17 +61,64 @@ function createAuthHeader() {
   )
 }
 
-async function main() {
-  const text = (process.argv.slice(2).join(" ") || await readStdin()).trim()
-  if (!text) throw new Error("Missing post text")
+function contentTypeFor(path: string) {
+  const extension = extname(path).toLowerCase()
+  if (extension === ".png") return "image/png"
+  if (extension === ".webp") return "image/webp"
+  return "image/jpeg"
+}
 
-  const response = await fetch(endpoint, {
+async function uploadImage(path: string) {
+  const file = await readFile(path)
+  const form = new FormData()
+  form.append("media", new Blob([file as unknown as BlobPart], { type: contentTypeFor(path) }), basename(path))
+
+  const response = await fetch(uploadEndpoint, {
+    method: "POST",
+    headers: { Authorization: createAuthHeader(uploadEndpoint) },
+    body: form,
+  })
+
+  const body = await response.text()
+  if (!response.ok) {
+    throw new Error(`X media upload error ${response.status}: ${body}`)
+  }
+
+  return (JSON.parse(body) as { media_id_string: string }).media_id_string
+}
+
+function parseArgs() {
+  const args = process.argv.slice(2)
+  const text: string[] = []
+  let imagePath: string | undefined
+
+  for (let i = 0; i < args.length; i++) {
+    if (args[i] === "--image") {
+      imagePath = args[++i]
+    } else {
+      text.push(args[i])
+    }
+  }
+
+  return { imagePath, text: text.join(" ") }
+}
+
+async function main() {
+  const args = parseArgs()
+  const text = (args.text || await readStdin()).trim()
+  if (!text) throw new Error("Missing post text")
+  const mediaId = args.imagePath ? await uploadImage(args.imagePath) : undefined
+
+  const response = await fetch(tweetEndpoint, {
     method: "POST",
     headers: {
-      Authorization: createAuthHeader(),
+      Authorization: createAuthHeader(tweetEndpoint),
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ text }),
+    body: JSON.stringify({
+      text,
+      ...(mediaId ? { media: { media_ids: [mediaId] } } : {}),
+    }),
   })
 
   const body = await response.text()

@@ -1,11 +1,11 @@
 ---
 name: x-publish
-description: Publish short text posts to X/Twitter for Antonio using the bundled script and X API credentials. Use when Antonio asks to publish, post, or tweet something on X.
+description: Publish short text or image posts to X/Twitter for Antonio using the bundled script and X API credentials. Use when Antonio asks to publish, post, or tweet something on X.
 ---
 
 # X Publish
 
-Use this skill when Antonio asks to publish a text post on X.
+Use this skill when Antonio asks to publish a post on X.
 
 ## Requirements
 
@@ -25,6 +25,12 @@ The environment must include:
 
 ```bash
 pnpm --dir /Users/antonio/Projects/antoniolg/agente-bolsillo exec tsx /Users/antonio/.config/agente-bolsillo/skills/x-publish/scripts/publish-x.ts "post text"
+```
+
+If Antonio sent an image, use the local image path with `--image`:
+
+```bash
+pnpm --dir /Users/antonio/Projects/antoniolg/agente-bolsillo exec tsx /Users/antonio/.config/agente-bolsillo/skills/x-publish/scripts/publish-x.ts --image "/path/to/image.jpg" "post text"
 ```
 
 If the text has several lines, pipe it through stdin:

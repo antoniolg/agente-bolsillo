@@ -3,10 +3,13 @@ import { homedir } from "node:os"
 import { join } from "node:path"
 import { Bot } from "grammy"
 import { createAgentSession, DefaultResourceLoader, SessionManager } from "@earendil-works/pi-coding-agent"
+import { saveTelegramPhoto } from "./telegram-files.js"
 
-const bot = new Bot(process.env.TELEGRAM_TOKEN!)
+const telegramToken = process.env.TELEGRAM_TOKEN!
+const bot = new Bot(telegramToken)
 const agentDir = join(homedir(), ".config", "agente-bolsillo")
 const skillsDir = join(agentDir, "skills")
+const uploadsDir = join(agentDir, "uploads")
 const soul = await readFile(join(agentDir, "SOUL.md"), "utf8")
 const user = await readFile(join(agentDir, "USER.md"), "utf8")
 const agents = await readFile(join(agentDir, "AGENTS.md"), "utf8")
@@ -43,6 +46,14 @@ async function askPi(message: string) {
 
 bot.on("message:text", async (ctx) => {
   const answer = await askPi(ctx.message.text)
+  await ctx.reply(answer)
+})
+
+bot.on("message:photo", async (ctx) => {
+  const photo = ctx.message.photo.at(-1)!
+  const imagePath = await saveTelegramPhoto(bot, telegramToken, photo.file_id, uploadsDir)
+  const caption = ctx.message.caption ?? "Antonio ha enviado una imagen."
+  const answer = await askPi(`${caption}\n\nImagen local: ${imagePath}`)
   await ctx.reply(answer)
 })
 

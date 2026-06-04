@@ -50,6 +50,14 @@ Añadimos una skill:
 - La skill explica cómo publicar en X usando un script propio.
 - El bot puede convertir una petición de Telegram en una acción fuera del chat.
 
+## Paso 5
+
+Añadimos soporte para imágenes:
+
+- Telegram descarga la foto a `~/.config/agente-bolsillo/uploads`.
+- El agente recibe la ruta local de la imagen.
+- La skill puede publicar en X con texto e imagen.
+
 ## Comandos
 
 ```bash
