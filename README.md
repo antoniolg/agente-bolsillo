@@ -12,6 +12,18 @@ Bot mínimo con Pi:
 - Pi ejecuta el turno.
 - El bot responde.
 
+## Paso 2
+
+Añadimos `SOUL.md` en la configuración del usuario:
+
+```txt
+~/.config/agente-bolsillo/SOUL.md
+```
+
+- El bot mantiene la misma arquitectura.
+- Pi recibe instrucciones de personalidad al arrancar la sesión.
+- La sesión trabaja desde la carpeta del agente, no desde el repo del runtime.
+
 ## Comandos
 
 ```bash
